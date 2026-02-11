@@ -26,6 +26,11 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
+      - name: Fingerprint workflow
+        run: |
+          echo "WORKFLOW_FINGERPRINT=2026-02-10-A"
+          sed -n '1,200p' .github/workflows/daily_weather_etl.yml
+
       - name: Run pipeline
         run: |
           python etl/run_weather_pipeline.py
