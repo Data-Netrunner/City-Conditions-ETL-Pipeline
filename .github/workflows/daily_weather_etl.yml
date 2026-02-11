@@ -28,7 +28,7 @@ jobs:
 
       - name: Run pipeline
         run: |
-          python -m etl.run_weather_pipeline
+          python etl/run_weather_pipeline.py
 
       - name: Commit and push updates
         run: |
