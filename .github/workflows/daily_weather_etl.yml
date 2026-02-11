@@ -37,6 +37,8 @@ jobs:
           grep -n "python" -n .github/workflows/daily_weather_etl.yml || true
 
       - name: Run pipeline
+        env:
+          PYTHONPATH: ${{ github.workspace }}
         run: |
           python etl/run_weather_pipeline.py
 
