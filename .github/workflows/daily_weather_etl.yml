@@ -31,6 +31,11 @@ jobs:
           echo "WORKFLOW_FINGERPRINT=2026-02-10-A"
           sed -n '1,200p' .github/workflows/daily_weather_etl.yml
 
+      - name: Fingerprint workflow
+        run: |
+          echo "WORKFLOW_FINGERPRINT=DAILY_WEATHER_V2"
+          grep -n "python" -n .github/workflows/daily_weather_etl.yml || true
+
       - name: Run pipeline
         run: |
           python etl/run_weather_pipeline.py
