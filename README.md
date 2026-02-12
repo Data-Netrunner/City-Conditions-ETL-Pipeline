@@ -4,12 +4,12 @@ This project builds an end-to-end ETL pipeline that pulls daily-updating weather
 
 ## Latest KPI snapshot
 
-- Date: **2026-02-17**
-- Avg Temp (°C): **0.33**
-- Max Temp (°C): **0.9**
-- Total Precip (mm): **0.0**
-- Avg Wind (km/h): **7.8**
-- Max Wind (km/h): **12.5**
+- Date: **2026-02-18**
+- Avg Temp (°C): **1.81**
+- Max Temp (°C): **2.5**
+- Total Precip (mm): **10.8**
+- Avg Wind (km/h): **15.71**
+- Max Wind (km/h): **21.7**
 
 ## Charts (auto-updated)
 
