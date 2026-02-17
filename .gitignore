@@ -1,0 +1,3 @@
+# Don't version raw data or local warehouses
+data/raw/
+warehouse/
