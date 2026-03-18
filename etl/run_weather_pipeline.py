@@ -12,6 +12,11 @@ from etl.transform_air_quality import clean_air_quality
 from etl.load_air_quality_duckdb import upsert_air_quality
 
 from etl.make_charts_combined import make_charts
+from etl.data_quality import (
+    assert_required_columns,
+    assert_not_empty,
+    append_run_log,
+)
 
 DB_PATH = "warehouse/city_conditions.duckdb"
 SCHEMA_SQL = "sql/schema.sql"
@@ -19,39 +24,67 @@ KPI_SQL_COMBINED = "sql/kpis_combined.sql"
 KPI_OUT = "reports/latest_kpis.csv"
 
 def main():
-    os.makedirs("data/raw", exist_ok=True)
-    os.makedirs("warehouse", exist_ok=True)
-    os.makedirs("reports", exist_ok=True)
-    os.makedirs("reports/charts", exist_ok=True)
+    weather_rows = 0
+    aq_rows = 0
+    kpi_rows = 0
 
-    # Schema + location
-    init_db(DB_PATH, SCHEMA_SQL)
-    upsert_location(DB_PATH, 1, CITY, LAT, LON, TIMEZONE)
+    try:
+        os.makedirs("data/raw", exist_ok=True)
+        os.makedirs("warehouse", exist_ok=True)
+        os.makedirs("reports", exist_ok=True)
+        os.makedirs("reports/charts", exist_ok=True)
 
-    # Weather ETL
-    df_weather_raw = fetch_weather_hourly(LAT, LON, TIMEZONE, past_days=7)
-    df_weather_raw.to_csv(RAW_WEATHER_CSV, index=False)
-    df_weather = clean_weather(df_weather_raw)
-    upsert_weather(DB_PATH, df_weather, location_id=1)
+        # Schema + location
+        init_db(DB_PATH, SCHEMA_SQL)
+        upsert_location(DB_PATH, 1, CITY, LAT, LON, TIMEZONE)
 
-    # Air Quality ETL
-    df_aq_raw = fetch_air_quality_hourly(LAT, LON, TIMEZONE, past_days=7)
-    df_aq = clean_air_quality(df_aq_raw)
-    upsert_air_quality(DB_PATH, df_aq, location_id=1)
+        # Weather ETL
+        df_weather_raw = fetch_weather_hourly(LAT, LON, TIMEZONE, past_days=7)
+        assert_required_columns(
+            df_weather_raw,
+            ["ts", "temperature_c", "precipitation_mm", "windspeed_kmh"],
+            "weather_raw"
+        )
+        df_weather_raw.to_csv(RAW_WEATHER_CSV, index=False)
 
-    # Combined KPIs
-    con = duckdb.connect(DB_PATH)
-    with open(KPI_SQL_COMBINED, "r", encoding="utf-8") as f:
-        sql = f.read()
-    df_kpis = con.execute(sql).df()
-    con.close()
-    df_kpis.to_csv(KPI_OUT, index=False)
+        df_weather = clean_weather(df_weather_raw)
+        assert_not_empty(df_weather, "weather_clean")
+        weather_rows = len(df_weather)
+        upsert_weather(DB_PATH, df_weather, location_id=1)
 
-    # Charts + README
-    make_charts(KPI_OUT, "reports/charts")
-    update_readme("README.md", KPI_OUT)
+        # Air Quality ETL
+        df_aq_raw = fetch_air_quality_hourly(LAT, LON, TIMEZONE, past_days=7)
+        assert_required_columns(
+            df_aq_raw,
+            ["ts", "pm25", "pm10", "no2", "o3"],
+            "aq_raw"
+        )
+        df_aq = clean_air_quality(df_aq_raw)
+        assert_not_empty(df_aq, "aq_clean")
+        aq_rows = len(df_aq)
+        upsert_air_quality(DB_PATH, df_aq, location_id=1)
 
-    print("Pipeline complete (Weather + Air Quality + Charts).")
+        # Combined KPIs
+        con = duckdb.connect(DB_PATH)
+        with open(KPI_SQL_COMBINED, "r", encoding="utf-8") as f:
+            sql = f.read()
+        df_kpis = con.execute(sql).df()
+        con.close()
+
+        assert_not_empty(df_kpis, "kpi_output")
+        kpi_rows = len(df_kpis)
+        df_kpis.to_csv(KPI_OUT, index=False)
+
+        # Charts + README
+        make_charts(KPI_OUT, "reports/charts")
+        update_readme("README.md", KPI_OUT)
+
+        append_run_log(weather_rows, aq_rows, kpi_rows, status="success")
+        print("Pipeline complete (Weather + Air Quality + Charts + DQ).")
+
+    except Exception as e:
+        append_run_log(weather_rows, aq_rows, kpi_rows, status="failed", message=str(e))
+        raise
 
 if __name__ == "__main__":
     main()
