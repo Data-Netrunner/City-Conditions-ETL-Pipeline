@@ -2,7 +2,6 @@ name: Daily Weather ETL
 
 on:
   schedule:
-    # Runs daily at 11:10 UTC (~6:10 AM Toronto in winter)
     - cron: "10 11 * * *"
   workflow_dispatch:
 
@@ -12,9 +11,12 @@ permissions:
 jobs:
   run-etl:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -25,16 +27,6 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-
-      - name: Fingerprint workflow
-        run: |
-          echo "WORKFLOW_FINGERPRINT=2026-02-10-A"
-          sed -n '1,200p' .github/workflows/daily_weather_etl.yml
-
-      - name: Fingerprint workflow
-        run: |
-          echo "WORKFLOW_FINGERPRINT=DAILY_WEATHER_V2"
-          grep -n "python" -n .github/workflows/daily_weather_etl.yml || true
 
       - name: Run pipeline
         env:
@@ -47,9 +39,8 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-          git add reports/charts README.md reports/latest_kpis.csv
-          git commit -m "Daily update (weather ETL)" || echo "No changes to commit"
+          git add README.md reports/charts reports/latest_kpis.csv reports/run_log.csv
+          git commit -m "Daily update ETL outputs" || echo "No changes to commit"
 
-          # 👇 Pull remote changes first, then push
           git pull --rebase origin main
-          git push
+          git push origin main
