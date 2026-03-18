@@ -14,3 +14,13 @@ CREATE TABLE IF NOT EXISTS fact_weather_hourly (
   windspeed_kmh DOUBLE,
   PRIMARY KEY(location_id, ts)
 );
+
+CREATE TABLE IF NOT EXISTS fact_air_quality_hourly (
+  location_id INTEGER,
+  ts TIMESTAMP,
+  pm25 DOUBLE,
+  pm10 DOUBLE,
+  no2 DOUBLE,
+  o3 DOUBLE,
+  PRIMARY KEY(location_id, ts)
+);
