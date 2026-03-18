@@ -8,6 +8,10 @@ on:
 permissions:
   contents: write
 
+concurrency:
+  group: daily-weather-etl
+  cancel-in-progress: false
+
 jobs:
   run-etl:
     runs-on: ubuntu-latest
@@ -39,13 +43,9 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-          # Sync with remote first
-          git pull --rebase origin main
+          git pull --rebase --autostash origin main
 
-          # Stage generated outputs
           git add README.md reports/charts reports/latest_kpis.csv reports/run_log.csv
-
-          # Commit only if something changed
           git diff --cached --quiet || git commit -m "Daily update ETL outputs"
 
           git push origin main
