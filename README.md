@@ -4,12 +4,12 @@ Automated end-to-end ETL pipeline that pulls daily-updating **weather + air qual
 
 ## Latest KPI snapshot
 
-- Date: **2026-04-01**
-- Avg Temp (°C): **9.07**
-- Max Temp (°C): **14.5**
-- Total Precip (mm): **13.8**
-- Avg Wind (km/h): **16.7**
-- Max Wind (km/h): **32.2**
+- Date: **2026-04-02**
+- Avg Temp (°C): **0.26**
+- Max Temp (°C): **1.8**
+- Total Precip (mm): **0.0**
+- Avg Wind (km/h): **15.0**
+- Max Wind (km/h): **18.9**
 - PM2.5 Avg (µg/m³): **NA**
 - PM2.5 Peak (µg/m³): **NA**
 
