@@ -2,6 +2,7 @@ name: Daily Weather ETL
 
 on:
   schedule:
+    # Runs daily at 11:10 UTC (~7:10 AM Toronto time)
     - cron: "10 11 * * *"
   workflow_dispatch:
 
@@ -40,7 +41,7 @@ jobs:
 
       - name: Commit and push updates
         run: |
-          git config user.name "github-actions[bot]"
+          git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
           git pull --rebase --autostash origin main

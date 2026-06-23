@@ -1,7 +1,10 @@
-import pandas as pd
 import math
 
-def _fmt(x):
+import pandas as pd
+
+
+def _fmt(x) -> str:
+    """Format a numeric value for README display; returns 'NA' for missing."""
     try:
         if x is None or (isinstance(x, float) and math.isnan(x)):
             return "NA"
@@ -9,13 +12,18 @@ def _fmt(x):
     except Exception:
         return "NA"
 
+
 def update_readme(readme_path: str, kpis_csv_path: str) -> None:
     df = pd.read_csv(kpis_csv_path)
     latest = df.iloc[0].to_dict() if not df.empty else {}
 
     lines = []
     lines.append("# City Conditions ETL (Daily)\n\n")
-    lines.append("Automated end-to-end ETL pipeline that pulls daily-updating **weather + air quality** data, loads it into a DuckDB analytics warehouse, and publishes KPI reports + charts.\n\n")
+    lines.append(
+        "Automated end-to-end ETL pipeline that pulls daily-updating "
+        "**weather + air quality** data, loads it into a DuckDB analytics "
+        "warehouse, and publishes KPI reports + charts.\n\n"
+    )
 
     if latest:
         lines.append("## Latest KPI snapshot\n\n")
@@ -31,7 +39,6 @@ def update_readme(readme_path: str, kpis_csv_path: str) -> None:
         lines.append("\n")
 
     lines.append("## Charts (auto-updated)\n\n")
-
     lines.append("**How to read these:**\n")
     lines.append("- X-axis is **date** (last 30 days)\n")
     lines.append("- Y-axis shows the **measured unit** for that chart (°C, mm, µg/m³)\n")
@@ -40,12 +47,14 @@ def update_readme(readme_path: str, kpis_csv_path: str) -> None:
     lines.append("### Weather\n\n")
     lines.append("- **Average Temperature (°C):** daily mean temperature\n\n")
     lines.append("![Average Temperature (30d)](reports/charts/avg_temp_30d.png)\n\n")
-
     lines.append("- **Total Precipitation (mm):** total precipitation accumulated per day\n\n")
     lines.append("![Daily Precipitation (30d)](reports/charts/precip_30d.png)\n\n")
 
     lines.append("### Air Quality\n\n")
-    lines.append("- **PM2.5 (µg/m³):** daily average fine particulate concentration (smaller = cleaner air)\n\n")
+    lines.append(
+        "- **PM2.5 (µg/m³):** daily average fine particulate concentration "
+        "(smaller = cleaner air)\n\n"
+    )
     lines.append("![PM2.5 Average (30d)](reports/charts/pm25_avg_30d.png)\n\n")
 
     lines.append("## Outputs\n\n")
