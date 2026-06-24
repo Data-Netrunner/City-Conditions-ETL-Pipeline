@@ -96,4 +96,8 @@ run_ts_utc,weather_rows,aq_rows,kpi_rows,status,message
 2026-06-21T13:17:27,336,288,30,success,
 2026-06-22T15:59:29,336,288,30,success,
 2026-06-23T13:46:11,336,288,30,success,
+<<<<<<< Updated upstream
 2026-06-24T01:08:02,336,288,30,success,
+=======
+2026-06-24T01:11:10,336,288,30,success,
+>>>>>>> Stashed changes
