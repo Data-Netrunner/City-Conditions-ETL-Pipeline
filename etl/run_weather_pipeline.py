@@ -13,7 +13,7 @@ from etl.extract_openaq import fetch_air_quality_hourly
 from etl.transform_air_quality import clean_air_quality
 from etl.load_air_quality_duckdb import upsert_air_quality
 from etl.make_charts_combined import make_charts
-from etl.update_readme_weather import update_readme
+# from etl.update_readme_weather import update_readme
 from etl.data_quality import assert_required_columns, assert_not_empty, append_run_log
 
 DB_PATH    = "warehouse/city_conditions.duckdb"
@@ -73,7 +73,7 @@ def main() -> None:
 
         # 4) Charts + README
         make_charts(KPI_OUT, "reports/charts")
-        update_readme("README.md", KPI_OUT)
+        # update_readme("README.md", KPI_OUT)
 
         append_run_log(weather_rows, aq_rows, kpi_rows, status="success")
         print("Pipeline complete (Weather + Air Quality + Charts).")
