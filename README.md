@@ -1,43 +1,98 @@
-# City Conditions ETL (Daily)
+# City Conditions ETL Pipeline
 
-Automated end-to-end ETL pipeline that pulls daily-updating **weather + air quality** data, loads it into a DuckDB analytics warehouse, and publishes KPI reports + charts.
+A fully automated end-to-end ETL pipeline that pulls daily weather and air quality data for **Toronto, Canada**, loads it into a DuckDB analytics warehouse, and publishes KPI reports and charts updated every day via GitHub Actions.
 
-## Latest KPI snapshot
+---
+
+## Data Sources
+
+All data is pulled from **[Open-Meteo](https://open-meteo.com/)** — a free, open-source weather and air quality API requiring no API key.
+
+| Source | API | Data Collected |
+|---|---|---|
+| Weather | [Open-Meteo Forecast API](https://api.open-meteo.com/v1/forecast) | Temperature (C), Precipitation (mm), Wind Speed (km/h) |
+| Air Quality | [Open-Meteo Air Quality API](https://air-quality-api.open-meteo.com/v1/air-quality) | PM2.5, PM10, NO2, Ozone |
+
+---
+
+## Latest KPI Snapshot
 
 - Date: **2026-06-29**
-- Avg Temp (°C): **21.3**
-- Max Temp (°C): **25.1**
+- Avg Temp (C): **19.9**
+- Max Temp (C): **24.1**
 - Total Precip (mm): **0.0**
-- Avg Wind (km/h): **7.4**
-- Max Wind (km/h): **13.0**
-- PM2.5 Avg (µg/m³): **NA**
-- PM2.5 Peak (µg/m³): **NA**
+- Avg Wind (km/h): **9.48**
+- Max Wind (km/h): **12.2**
+- PM2.5 Avg (ug/m3): **NA**
+- PM2.5 Peak (ug/m3): **NA**
 
-## Charts (auto-updated)
+---
 
-**How to read these:**
-- X-axis is **date** (last 30 days)
-- Y-axis shows the **measured unit** for that chart (°C, mm, µg/m³)
-- Values are **daily aggregates** computed from hourly data in the warehouse
+## Charts (auto-updated daily)
 
 ### Weather
 
-- **Average Temperature (°C):** daily mean temperature
+- **Average Temperature (C):** daily mean temperature
 
 ![Average Temperature (30d)](reports/charts/avg_temp_30d.png)
 
-- **Total Precipitation (mm):** total precipitation accumulated per day
+- **Total Precipitation (mm):** total precipitation per day
 
 ![Daily Precipitation (30d)](reports/charts/precip_30d.png)
 
 ### Air Quality
 
-- **PM2.5 (µg/m³):** daily average fine particulate concentration (smaller = cleaner air)
+- **PM2.5 (ug/m3):** daily average fine particulate concentration (smaller = cleaner air)
 
 ![PM2.5 Average (30d)](reports/charts/pm25_avg_30d.png)
 
+---
+
+## How It Works
+
+| Step | What happens |
+|---|---|
+| Extract | Pulls 7 days of hourly weather and air quality data from Open-Meteo |
+| Transform | Cleans and validates the data |
+| Load | Upserts into a DuckDB warehouse |
+| Report | Generates KPI CSV, 30-day charts, and rewrites this README |
+| Log | Appends a row to reports/run_log.csv |
+
+---
+
+## Tech Stack
+
+| Technology | Purpose |
+|---|---|
+| Python | ETL scripting |
+| DuckDB | Analytics warehouse |
+| pandas | Data transformation |
+| requests | API extraction |
+| matplotlib | Chart generation |
+| GitHub Actions | Daily automation |
+
+---
+
 ## Outputs
 
-- `warehouse/city_conditions.duckdb`
-- `reports/latest_kpis.csv`
-- `reports/charts/*.png`
+- `warehouse/city_conditions.duckdb` — full historical warehouse
+- `reports/latest_kpis.csv` — most recent daily KPI snapshot
+- `reports/run_log.csv` — log of every pipeline run
+- `reports/charts/*.png` — auto-generated 30-day charts
+
+---
+
+## How to Run Locally
+
+```bash
+git clone https://github.com/Data-Netrunner/City-Conditions-ETL-Pipeline.git
+cd City-Conditions-ETL-Pipeline
+pip install -r requirements.txt
+python etl/run_weather_pipeline.py
+```
+
+No API keys or paid services required.
+
+---
+
+*Built by Andre Felix - Data updated daily via GitHub Actions*
