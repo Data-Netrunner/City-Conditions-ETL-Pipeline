@@ -17,12 +17,12 @@ All data is pulled from **[Open-Meteo](https://open-meteo.com/)** — a free, op
 
 ## Latest KPI Snapshot
 
-- Date: **2026-07-03**
-- Avg Temp (C): **30.47**
-- Max Temp (C): **35.4**
+- Date: **2026-07-04**
+- Avg Temp (C): **29.29**
+- Max Temp (C): **34.4**
 - Total Precip (mm): **0.0**
-- Avg Wind (km/h): **14.26**
-- Max Wind (km/h): **23.6**
+- Avg Wind (km/h): **13.92**
+- Max Wind (km/h): **22.3**
 - PM2.5 Avg (ug/m3): **NA**
 - PM2.5 Peak (ug/m3): **NA**
 
