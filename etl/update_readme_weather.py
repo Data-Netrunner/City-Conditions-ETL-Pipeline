@@ -16,8 +16,7 @@ def update_readme(readme_path, kpis_csv_path, prediction=None):
     latest = df.iloc[0].to_dict() if not df.empty else {}
     lines = []
     lines.append("# City Conditions ETL Pipeline\n\n")
-    lines.append("A fully automated daily pipeline that ingests weather and air quality data for **Toronto, Canada**, loads it into a DuckDB analytics warehouse, and publishes **next-day temperature forecasts with walk-forward validated accuracy** — benchmarked against a persistence baseline and rebuilt every morning by GitHub Actions.\n\n")
-    lines.append("Forecast accuracy is published whether or not the model is winning. Every number below is regenerated from live data on each run; nothing here is hand-written.\n\n")
+    lines.append("A fully automated end-to-end ETL pipeline that pulls daily weather and air quality data for **Toronto, Canada**, loads it into a DuckDB analytics warehouse, and publishes KPI reports and charts updated every day via GitHub Actions.\n\n")
     lines.append("---\n\n")
     lines.append("## Data Sources\n\n")
     lines.append("All data is pulled from **[Open-Meteo](https://open-meteo.com/)** — a free, open-source weather and air quality API requiring no API key.\n\n")
@@ -26,13 +25,6 @@ def update_readme(readme_path, kpis_csv_path, prediction=None):
     lines.append("| Weather | [Open-Meteo Forecast API](https://api.open-meteo.com/v1/forecast) | Temperature (C), Precipitation (mm), Wind Speed (km/h) |\n")
     lines.append("| Air Quality | [Open-Meteo Air Quality API](https://air-quality-api.open-meteo.com/v1/air-quality) | PM2.5, PM10, NO2, Ozone |\n\n")
     lines.append("---\n\n")
-
-    # --- model forecast + accuracy ---
-    # Deliberately placed FIRST, above the KPI snapshot: a reviewer skims the
-    # top of a README for a few seconds, and the validated forecast is what
-    # distinguishes this project from a plain ETL job.
-    lines.extend(prediction_section_lines(prediction))
-
     if latest:
         lines.append("## Latest KPI Snapshot\n\n")
         lines.append(f"- Date: **{latest.get('day')}**\n")
@@ -46,6 +38,8 @@ def update_readme(readme_path, kpis_csv_path, prediction=None):
             lines.append(f"- PM2.5 Peak (ug/m3): **{_fmt(latest.get('pm25_peak'))}**\n")
         lines.append("\n")
     lines.append("---\n\n")
+    # --- model forecast + accuracy ---
+    lines.extend(prediction_section_lines(prediction))
 
     lines.append("## Charts (auto-updated daily)\n\n")
     lines.append("### Weather\n\n")

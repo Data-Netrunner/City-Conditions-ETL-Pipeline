@@ -1,8 +1,6 @@
 # City Conditions ETL Pipeline
 
-A fully automated daily pipeline that ingests weather and air quality data for **Toronto, Canada**, loads it into a DuckDB analytics warehouse, and publishes **next-day temperature forecasts with walk-forward validated accuracy** — benchmarked against a persistence baseline and rebuilt every morning by GitHub Actions.
-
-Forecast accuracy is published whether or not the model is winning. Every number below is regenerated from live data on each run; nothing here is hand-written.
+A fully automated end-to-end ETL pipeline that pulls daily weather and air quality data for **Toronto, Canada**, loads it into a DuckDB analytics warehouse, and publishes KPI reports and charts updated every day via GitHub Actions.
 
 ---
 
@@ -14,6 +12,19 @@ All data is pulled from **[Open-Meteo](https://open-meteo.com/)** — a free, op
 |---|---|---|
 | Weather | [Open-Meteo Forecast API](https://api.open-meteo.com/v1/forecast) | Temperature (C), Precipitation (mm), Wind Speed (km/h) |
 | Air Quality | [Open-Meteo Air Quality API](https://air-quality-api.open-meteo.com/v1/air-quality) | PM2.5, PM10, NO2, Ozone |
+
+---
+
+## Latest KPI Snapshot
+
+- Date: **2026-08-23**
+- Avg Temp (C): **17.44**
+- Max Temp (C): **19.4**
+- Total Precip (mm): **10.9**
+- Avg Wind (km/h): **11.59**
+- Max Wind (km/h): **19.8**
+- PM2.5 Avg (ug/m3): **3.65**
+- PM2.5 Peak (ug/m3): **8.9**
 
 ---
 
@@ -39,19 +50,6 @@ Every forecast below was made using only data available *before* the day it pred
 ![Forecast vs Actual](reports/charts/forecast_vs_actual_30d.png)
 
 ![Forecast Error](reports/charts/forecast_error_30d.png)
-
----
-
-## Latest KPI Snapshot
-
-- Date: **2026-08-23**
-- Avg Temp (C): **17.44**
-- Max Temp (C): **19.4**
-- Total Precip (mm): **10.9**
-- Avg Wind (km/h): **11.59**
-- Max Wind (km/h): **19.8**
-- PM2.5 Avg (ug/m3): **3.65**
-- PM2.5 Peak (ug/m3): **8.9**
 
 ---
 
