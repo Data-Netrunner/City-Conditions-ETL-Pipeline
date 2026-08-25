@@ -30,9 +30,10 @@ All data is pulled from **[Open-Meteo](https://open-meteo.com/)** — a free, op
 
 ## Next-Day Forecast (model output)
 
-- Forecast for **2026-08-24**: **40.07 °C** average temperature
+- Forecast for **2026-08-24**: **18.67 °C** average temperature
 - Persistence baseline ("same as today"): 17.44 °C
-- Model: RidgeCV on 10 engineered features, trained on 21 observed days
+- Model: RidgeCV on 8 engineered features, trained on 21 observed days
+- Seasonal (day-of-year) features are **disabled** until the history covers most of a year — with partial coverage they extrapolate badly
 
 ### Accuracy (walk-forward backtest)
 
@@ -40,11 +41,11 @@ Every forecast below was made using only data available *before* the day it pred
 
 | Metric | Model | Persistence baseline |
 |---|---|---|
-| MAE (°C) | **1.419** | 1.231 |
-| RMSE (°C) | **1.488** | 1.609 |
+| MAE (°C) | **1.503** | 1.231 |
+| RMSE (°C) | **1.657** | 1.609 |
 | Days scored | 6 | 6 |
 
-**Skill score vs persistence: -15.3%** — currently not yet beating the baseline. Skill is the share of the baseline's error the model removes; it is published whether it is positive or negative.
+**Skill score vs persistence: -22.2%** — currently not yet beating the baseline. Skill is the share of the baseline's error the model removes; it is published whether it is positive or negative.
 
 ![Forecast vs Actual](reports/charts/forecast_vs_actual_30d.png)
 

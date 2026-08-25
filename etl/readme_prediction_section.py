@@ -23,10 +23,22 @@ def prediction_section_lines(prediction: dict | None) -> list[str]:
         f"- Persistence baseline (\"same as today\"): "
         f"{prediction['baseline_temp_c']} °C\n"
     )
+    n_feat = prediction.get("n_features") or 0
     lines.append(
-        f"- Model: RidgeCV on 10 engineered features, "
-        f"trained on {prediction['trained_rows']} observed days\n\n"
+        f"- Model: RidgeCV on {n_feat} engineered features, "
+        f"trained on {prediction['trained_rows']} observed days\n"
     )
+    if not prediction.get("seasonal_used", False):
+        lines.append(
+            "- Seasonal (day-of-year) features are **disabled** until the history "
+            "covers most of a year — with partial coverage they extrapolate badly\n"
+        )
+    if prediction.get("clamped", False):
+        lines.append(
+            "- This forecast was **clamped** to physically plausible bounds; "
+            "the raw model output was out of range\n"
+        )
+    lines.append("\n")
 
     if m:
         skill = m.get("skill_vs_persistence")
