@@ -16,6 +16,7 @@ concurrency:
 jobs:
   run-etl:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
 
     steps:
       - name: Checkout repository
@@ -27,6 +28,7 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
+          cache: "pip"
 
       - name: Install dependencies
         run: |
@@ -46,7 +48,11 @@ jobs:
 
           git pull --rebase --autostash origin main
 
-          git add README.md reports/charts reports/latest_kpis.csv reports/run_log.csv
-          git diff --cached --quiet || git commit -m "Daily update ETL outputs"
+          # Stage whole directories rather than individual files. The
+          # prediction CSVs only appear once there is enough history to fit a
+          # model, and `git add` fails the job if a named file doesn't exist.
+          git add README.md reports data/history
+
+          git diff --cached --quiet || git commit -m "Daily ETL update: KPIs, charts, and next-day forecast"
 
           git push origin main
