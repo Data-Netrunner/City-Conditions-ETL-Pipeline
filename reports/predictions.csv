@@ -1,2 +1,2 @@
 predicted_on,target_day,predicted_temp_c,baseline_temp_c,trained_rows,model,raw_model_temp_c,clamped,n_features,seasonal_used
-2026-08-25,2026-08-24,18.67,17.44,21,RidgeCV(standardised),18.67,False,8.0,False
+2026-08-25,2026-08-25,16.81,16.85,22,RidgeCV(standardised),16.81,False,8.0,False
