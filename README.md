@@ -1,6 +1,8 @@
 # City Conditions ETL Pipeline
 
-A fully automated end-to-end ETL pipeline that pulls daily weather and air quality data for **Toronto, Canada**, loads it into a DuckDB analytics warehouse, and publishes KPI reports and charts updated every day via GitHub Actions.
+A fully automated daily pipeline that ingests weather and air quality data for **Toronto, Canada**, loads it into a DuckDB analytics warehouse, and publishes **next-day temperature forecasts with walk-forward validated accuracy** — benchmarked against a persistence baseline and rebuilt every morning by GitHub Actions.
+
+Forecast accuracy is published whether or not the model is winning. Every number below is regenerated from live data on each run; nothing here is hand-written.
 
 ---
 
@@ -12,19 +14,6 @@ All data is pulled from **[Open-Meteo](https://open-meteo.com/)** — a free, op
 |---|---|---|
 | Weather | [Open-Meteo Forecast API](https://api.open-meteo.com/v1/forecast) | Temperature (C), Precipitation (mm), Wind Speed (km/h) |
 | Air Quality | [Open-Meteo Air Quality API](https://air-quality-api.open-meteo.com/v1/air-quality) | PM2.5, PM10, NO2, Ozone |
-
----
-
-## Latest KPI Snapshot
-
-- Date: **2026-08-23**
-- Avg Temp (C): **17.44**
-- Max Temp (C): **19.4**
-- Total Precip (mm): **10.9**
-- Avg Wind (km/h): **11.59**
-- Max Wind (km/h): **19.8**
-- PM2.5 Avg (ug/m3): **3.65**
-- PM2.5 Peak (ug/m3): **8.9**
 
 ---
 
@@ -53,6 +42,19 @@ Every forecast below was made using only data available *before* the day it pred
 
 ---
 
+## Latest KPI Snapshot
+
+- Date: **2026-08-23**
+- Avg Temp (C): **17.44**
+- Max Temp (C): **19.4**
+- Total Precip (mm): **10.9**
+- Avg Wind (km/h): **11.59**
+- Max Wind (km/h): **19.8**
+- PM2.5 Avg (ug/m3): **3.65**
+- PM2.5 Peak (ug/m3): **8.9**
+
+---
+
 ## Charts (auto-updated daily)
 
 ### Weather
@@ -77,10 +79,12 @@ Every forecast below was made using only data available *before* the day it pred
 
 | Step | What happens |
 |---|---|
-| Extract | Pulls 7 days of hourly weather and air quality data from Open-Meteo |
-| Transform | Cleans and validates the data |
-| Load | Upserts into a DuckDB warehouse |
-| Report | Generates KPI CSV, 30-day charts, and rewrites this README |
+| Extract | Pulls 7 days of hourly weather and air quality from Open-Meteo (observations only — `forecast_days=0`, so the API's own forecast never enters the observation tables) |
+| Transform | Cleans and validates: parses timestamps, nulls physically impossible values, deduplicates |
+| Load | Upserts into a DuckDB warehouse, keyed on (location_id, ts) so re-runs are idempotent |
+| History | Appends observed daily aggregates to `data/history/daily_observations.csv` — the durable record the model trains on |
+| Predict | Fits a RidgeCV model on lagged daily features, forecasts the next day, and scores every past forecast walk-forward |
+| Report | Generates KPI CSV, 30-day charts, forecast charts, and rewrites this README |
 | Log | Appends a row to reports/run_log.csv |
 
 ---
@@ -94,16 +98,33 @@ Every forecast below was made using only data available *before* the day it pred
 | pandas | Data transformation |
 | requests | API extraction |
 | matplotlib | Chart generation |
-| GitHub Actions | Daily automation |
+| scikit-learn | Forecasting model (RidgeCV) and validation |
+| pytest | Test suite |
+| GitHub Actions | Daily automation and CI |
 
 ---
 
 ## Outputs
 
-- `warehouse/city_conditions.duckdb` — full historical warehouse
+- `data/history/daily_observations.csv` — **the durable observation record.** Append-only, committed on every run, and what the forecasting model trains on
+- `warehouse/city_conditions.duckdb` — DuckDB warehouse, rebuilt from the API's rolling window each run (a derived artifact, not the system of record)
 - `reports/latest_kpis.csv` — most recent daily KPI snapshot
+- `reports/predictions.csv` — every forecast ever published, with the raw model output and whether sanity bounds were applied
+- `reports/prediction_backtest.csv` — per-day walk-forward scores: prediction, actual, and baseline
+- `reports/prediction_metrics.csv` — MAE / RMSE / skill history over time
 - `reports/run_log.csv` — log of every pipeline run
 - `reports/charts/*.png` — auto-generated 30-day charts
+
+---
+
+## Tests
+
+```bash
+pip install -r requirements-dev.txt
+pytest -q
+```
+
+The suite covers transform invariants, the no-leakage-across-calendar-gaps property of the feature builder, and regression tests for both extrapolation guards — including the literal 40 °C forecast this pipeline once published.
 
 ---
 
