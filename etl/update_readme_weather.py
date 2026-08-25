@@ -1,6 +1,8 @@
 import math
 import pandas as pd
 
+from etl.readme_prediction_section import prediction_section_lines
+
 def _fmt(x):
     try:
         if x is None or (isinstance(x, float) and math.isnan(x)):
@@ -9,7 +11,7 @@ def _fmt(x):
     except Exception:
         return "NA"
 
-def update_readme(readme_path, kpis_csv_path):
+def update_readme(readme_path, kpis_csv_path, prediction=None):
     df = pd.read_csv(kpis_csv_path)
     latest = df.iloc[0].to_dict() if not df.empty else {}
     lines = []
@@ -36,6 +38,9 @@ def update_readme(readme_path, kpis_csv_path):
             lines.append(f"- PM2.5 Peak (ug/m3): **{_fmt(latest.get('pm25_peak'))}**\n")
         lines.append("\n")
     lines.append("---\n\n")
+    # --- model forecast + accuracy ---
+    lines.extend(prediction_section_lines(prediction))
+
     lines.append("## Charts (auto-updated daily)\n\n")
     lines.append("### Weather\n\n")
     lines.append("- **Average Temperature (C):** daily mean temperature\n\n")

@@ -1,0 +1,2 @@
+run_date,n_scored_days,model_mae_c,model_rmse_c,baseline_mae_c,baseline_rmse_c,skill_vs_persistence
+2026-08-25,6,1.419,1.488,1.231,1.609,-0.153

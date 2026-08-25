@@ -1,0 +1,2 @@
+predicted_on,target_day,predicted_temp_c,baseline_temp_c,trained_rows,model
+2026-08-25,2026-08-24,40.07,17.44,21,"RidgeCV(standardised, 10 features)"

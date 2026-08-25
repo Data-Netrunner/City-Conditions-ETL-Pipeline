@@ -2,3 +2,4 @@ duckdb
 pandas
 requests
 matplotlib
+scikit-learn
