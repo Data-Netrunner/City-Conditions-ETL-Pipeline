@@ -70,3 +70,4 @@ predicted_on,target_day,predicted_temp_c,baseline_temp_c,trained_rows,model,raw_
 2026-11-02,2026-11-02,12.32,9.63,91,RidgeCV(standardised),12.32,False,8.0,False
 2026-11-03,2026-11-03,12.42,11.54,92,RidgeCV(standardised),12.42,False,8.0,False
 2026-11-04,2026-11-04,13.65,15.03,93,RidgeCV(standardised),13.65,False,8.0,False
+2026-11-05,2026-11-05,13.74,14.87,94,RidgeCV(standardised),13.74,False,8.0,False
