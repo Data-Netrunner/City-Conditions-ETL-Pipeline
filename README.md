@@ -17,22 +17,22 @@ All data is pulled from **[Open-Meteo](https://open-meteo.com/)** — a free, op
 
 ## Latest KPI Snapshot
 
-- Date: **2026-11-06**
-- Avg Temp (C): **10.26**
-- Max Temp (C): **13.1**
+- Date: **2026-11-07**
+- Avg Temp (C): **6.22**
+- Max Temp (C): **9.9**
 - Total Precip (mm): **0.0**
-- Avg Wind (km/h): **11.09**
-- Max Wind (km/h): **17.3**
-- PM2.5 Avg (ug/m3): **4.85**
-- PM2.5 Peak (ug/m3): **6.3**
+- Avg Wind (km/h): **9.58**
+- Max Wind (km/h): **13.4**
+- PM2.5 Avg (ug/m3): **5.94**
+- PM2.5 Peak (ug/m3): **9.4**
 
 ---
 
 ## Next-Day Forecast (model output)
 
-- Forecast for **2026-11-07**: **11.15 °C** average temperature
-- Persistence baseline ("same as today"): 10.26 °C
-- Model: RidgeCV on 8 engineered features, trained on 96 observed days
+- Forecast for **2026-11-08**: **10.74 °C** average temperature
+- Persistence baseline ("same as today"): 6.22 °C
+- Model: RidgeCV on 8 engineered features, trained on 97 observed days
 - Seasonal (day-of-year) features are **disabled** until the history covers most of a year — with partial coverage they extrapolate badly
 
 ### Accuracy (walk-forward backtest)
@@ -41,11 +41,11 @@ Every forecast below was made using only data available *before* the day it pred
 
 | Metric | Model | Persistence baseline |
 |---|---|---|
-| MAE (°C) | **1.756** | 2.04 |
-| RMSE (°C) | **2.235** | 2.581 |
-| Days scored | 81 | 81 |
+| MAE (°C) | **1.794** | 2.065 |
+| RMSE (°C) | **2.287** | 2.604 |
+| Days scored | 82 | 82 |
 
-**Skill score vs persistence: +14.0%** — currently beating the baseline. Skill is the share of the baseline's error the model removes; it is published whether it is positive or negative.
+**Skill score vs persistence: +13.1%** — currently beating the baseline. Skill is the share of the baseline's error the model removes; it is published whether it is positive or negative.
 
 ![Forecast vs Actual](reports/charts/forecast_vs_actual_30d.png)
 
